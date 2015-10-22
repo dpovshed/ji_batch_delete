@@ -1,0 +1,43 @@
+<?php
+/**
+ * $file
+ * Provide batch delete repository objects functionality.
+ */
+
+/**
+ * Implements hook_form_alter().
+ */
+function ji_batch_delete_form_alter(&$form, &$form_state, $form_id) {
+  if ($form_id == ('islandora_basic_collection_delete_children_form')) {
+    $form['submit'] = array(
+      array(
+        '#type' => 'submit',
+        '#value' => t('Delete selected objects'),
+      ),
+      array(
+        '#type' => 'submit',
+        '#value' => t('Delete All objects in this collection'),
+      ),
+    );
+    $form['#submit'] = array('ji_batch_delete_islandora_basic_collection_delete_children_form_submit');
+  }
+}
+
+/**
+ * Submit handler for object deletion form in the collection manager.
+ *
+ * @param array $form
+ *   The Drupal form definition.
+ * @param array $form_state
+ *   The Drupal form state.
+ */
+function ji_batch_delete_islandora_basic_collection_delete_children_form_submit(array $form, array &$form_state) {
+  $collection = $form_state['collection'];
+  if ($form_state['input']['op'] === t('Delete All objects in this collection')) {
+    $children = null;
+  } else {
+    $children = array_keys(array_filter($form_state['values']['children']));
+  }
+  $batch = islandora_basic_collection_delete_children_batch($collection, $children);
+  batch_set($batch);
+}

@@ -1,0 +1,4 @@
+name = IJ Batch Delete
+description = "Provide batch delete repository objects functionality."
+package = IJ
+core = 7.x
